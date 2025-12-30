@@ -2,96 +2,53 @@
 
 import type React from "react"
 
-import { useState } from "react"
+{/* FIELDS */}
+import { EventTypeField } from "./fields/EventTypeField"
+import { LocationField } from "./fields/LocationField"
+import { AttendanceField } from "./fields/AttendanceField"
 
-{/* UI COMPONENTS */}
-import { Button } from "@/components/ui/button"
-import { MusiciansForm } from "@/components/musicians"
-
-{/* COMPONENTS */}
-import { EventTypeField } from "./EventTypeField"
-import { LocationField } from "./LocationField"
-import { AttendanceField } from "./AttendanceField"
 {/* TYPES */}
-import type { FormDataType } from "@/lib/types"
+import type { FormDataType, SetFormDataType } from "@/lib/types"
 
-export function GeralForm() {
-  const [currentStep, setCurrentStep] = useState(0)
-  const [showMusicians, setShowMusicians] = useState(false)
+{/* HOOKS */}
+import { useMemo } from "react"
 
-  const [formData, setFormData] = useState<FormDataType>({
-    localidade: "",
-    eventoData: "",
-    eventoHorario: "",
-    tipoEvento: "",
-    atendimentoPresidencia: "",
-    atendimentoRegencia: "",
-    instrumentos: {},
-    organistas: 0,
-  })
+{/* GUARD */}
+import { canProceedToNextStep } from "@/lib/formGuards"
 
-  const handleNext = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (currentStep < 2) {
-      setCurrentStep(currentStep + 1)
-    } else {
-      // Ao atingir o último passo, mostrar o formulário de músicos
-      setShowMusicians(true)
-    }
-  }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log("Dados do formulário:", formData)
-  }
+interface GeneralFormProps {
+  formData: FormDataType
+  setFormData: SetFormDataType
+  currentStep: number
+  onNext: (e: React.FormEvent) => void
+  onReset: () => void
+}
 
-  const canProceed = () => {
-    if (currentStep === 0) return formData.localidade.trim() !== ""
-    if (currentStep === 1) {
-      return (
-        formData.eventoData !== "" &&
-        formData.eventoHorario !== "" &&
-        formData.tipoEvento !== ""
-      )
-    }
-    return true
-  }
+export default function GeneralForm({ formData, setFormData, currentStep, onNext, onReset}: GeneralFormProps) {
+  const canProceed = useMemo(
+    () => canProceedToNextStep(currentStep, formData),
+    [currentStep, formData],
+  )
 
-  if (showMusicians) {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            onClick={() => {
-              setShowMusicians(false)
-              setCurrentStep(2)
-            }}
-          >
-            Voltar
-          </Button>
-        </div>
 
-        <MusiciansForm formData={formData} setFormData={setFormData} />
-      </div>
-    )
-  }
 
   return (
-    <form onSubmit={handleNext} className="space-y-6">
+    <form onSubmit={onNext} className="space-y-6">
       {/* Localidade */}
       <LocationField
+        currentStep={currentStep}
         formData={formData}
         setFormData={setFormData}
-        currentStep={currentStep}
+        onReset={onReset}
       />
 
       {/* Tipo de Evento */}
       {currentStep >= 1 && (
         <EventTypeField
+          eventoData={formData.eventoData}
           formData={formData}
           setFormData={setFormData}
-          currentStep={currentStep}
         />
       )}
 
@@ -101,14 +58,13 @@ export function GeralForm() {
       )}
 
       {currentStep >= 0 && (
-        <Button
+        <button
           type="submit"
-          className="w-full h-12 text-base font-medium transition-all duration-300 animate-in fade-in slide-in-from-bottom-4"
-          size="lg"
-          disabled={!canProceed()}
+          className="w-full h-12 text-base font-medium transition-all duration-300 animate-in fade-in slide-in-from-bottom-4 bg-primary text-primary-foreground rounded-md"
+          disabled={!canProceed}
         >
-          {currentStep < 2 ? "Continuar" : "Proximo"}
-        </Button>
+          {currentStep < 2 ? "Continuar" : "Próximo"}
+        </button>
       )}
     </form>
   )

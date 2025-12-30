@@ -1,6 +1,3 @@
-"use client"
-import * as React from "react"
-
 {/* UI COMPONENTS */}
 import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
@@ -16,39 +13,33 @@ import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover
 import { Button } from "@/components/ui/button"
 import { Calendar as CalendarPicker } from "@/components/ui/calendar"
 
+{/* HOOKS */}
+import { useEventData } from "@/hooks/useEventData"
+
 {/* ICONS */}
 import { Calendar as CalendarIcon } from "lucide-react"
-
-{/* TYPES */}
-import type { FormDataType } from "@/lib/types"
-import type { SetFormDataType } from "@/lib/types"
 
 {/* CONSTANTS */}
 import { eventTypes } from "@/lib/constants"
 
-export function EventTypeField({
-  formData,
-  setFormData,
-  currentStep,
-}: {
+{/* TYPES */}
+import type { FormDataType, SetFormDataType } from "@/lib/types"
+
+interface EventTypeFieldProps {
+  eventoData: string
   formData: FormDataType
   setFormData: SetFormDataType
-  currentStep: number
-}) {
-  const [date, setDate] = React.useState<Date | undefined>(
-    formData.eventoData ? new Date(formData.eventoData) : undefined
-  )
+}
 
-  React.useEffect(() => {
-    if (date) {
-      const iso = date.toISOString().split("T")[0]
-      if (iso !== formData.eventoData) {
-        setFormData({ ...formData, eventoData: iso })
-      }
-    } else if (formData.eventoData) {
-      setFormData({ ...formData, eventoData: "" })
-    }
-  }, [date])
+export function EventTypeField({
+  eventoData,
+  formData,
+  setFormData,
+}: EventTypeFieldProps) {
+  const { date, selectEventDate, setEventTime, setEventType } =
+    useEventData(eventoData, setFormData)
+
+  
   return (
     <Card className="transition-all duration-700 animate-in fade-in slide-in-from-bottom-8">
       <CardContent className="space-y-3">
@@ -64,9 +55,7 @@ export function EventTypeField({
         <div className="space-y-3 pt-2">
           <RadioGroup
             value={formData.tipoEvento}
-            onValueChange={(value) =>
-              setFormData({ ...formData, tipoEvento: value })
-            }
+            onValueChange={setEventType}
             className=""
           >
             {eventTypes.map((eventType) => (
@@ -114,7 +103,7 @@ export function EventTypeField({
                 <CalendarPicker
                   mode="single"
                   selected={date}
-                  onSelect={(selectedDate) => setDate(selectedDate as Date | undefined)}
+                  onSelect={selectEventDate}
                   className="rounded-md border shadow-sm"
                   captionLayout="dropdown"
                 />
@@ -128,9 +117,7 @@ export function EventTypeField({
             </Label>
             <Select
               value={formData.eventoHorario}
-              onValueChange={(value) =>
-                setFormData({ ...formData, eventoHorario: value })
-              }
+              onValueChange={setEventTime}
               
             >
               <SelectTrigger className="w-full min-h-12 sm:min-h-10 text-sm ">

@@ -7,6 +7,8 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
+  preload: true,
+  fallback: ["system-ui", "arial"],
 })
 
 export const metadata: Metadata = {
@@ -39,6 +41,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className="dark">
+      <head>
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         {children}
       </body>

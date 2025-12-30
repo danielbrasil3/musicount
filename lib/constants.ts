@@ -1,10 +1,26 @@
-import type { EventType } from "@/lib/types"
+import type { EventType, FormDataType } from "@/lib/types"
+
+export const STEP_ORDER = ["geral", "musicians", "comparecimento", "complementos", "preview"] as const
+
+export const INITIAL_FORM_DATA: FormDataType = {
+  localidade: "",
+  eventoData: "",
+  eventoHorario: "",
+  tipoEvento: "",
+  atendimentoPresidencia: "",
+  atendimentoRegencia: "",
+  instrumentos: {},
+  organistas: 0,
+  ministerio: {},
+  irmandade: { irmas: 0, irmaos: 0 },
+  complementos: { hinos: [], coros: [], visitas: [] },
+}
 
 export const eventTypes: EventType = [
   { id: "ensaio-local", label: "Ensaio Local" },
   { id: "ensaio-regional", label: "Ensaio Regional" },
   { id: "pratica-gem", label: "Prática em Conjunto (GEM)" },
-]
+] 
 
 export const instruments = [
   { id: "violino", label: "Violino", category: "cordas" },
@@ -41,3 +57,13 @@ export const categoryLabels: { [key: string]: string } = {
   metais: "Metais",
   outros: "Outros",
 }
+
+export const ministerioTypes = [
+  { id: "anciao", label: "Ancião" },
+  { id: "diacono", label: "Diácono" },
+  { id: "coop-oficio", label: "Coop. do Ofício" },
+  { id: "coop-jovens", label: "Coop. de Jovens e Menores" },
+  { id: "enc-regional", label: "Enc Regional" },
+  { id: "examinadora", label: "Examinadora" },
+  { id: "enc-local", label: "Enc Local" },
+] 

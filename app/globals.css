@@ -3,6 +3,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Otimização de LCP: Priorizar CSS crítico */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 :root {
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -124,5 +130,8 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  h1 {
+    contain: layout style paint;
   }
 }

@@ -1,16 +1,27 @@
-
+{/* UI COMPONENTS */}
 import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+
+{/* ICONS */}
 import { Users } from "lucide-react"
-import type { FormDataType } from "@/lib/types"
-import type { SetFormDataType } from "@/lib/types"
 
+{/* CONSTANTS */}
+import { MAX_NAME_LENGTH } from "@/lib/validation"
 
-export function AttendanceField({ formData, setFormData }: {
+{/* HOOKS */}
+import { useFormFields } from "@/hooks/useFormFields"
+
+{/* TYPES */}
+import type { FormDataType, SetFormDataType } from "@/lib/types"
+
+interface AttendanceFieldProps {
   formData: FormDataType
   setFormData: SetFormDataType
-}) {
+}
+
+export function AttendanceField({ setFormData, formData }: AttendanceFieldProps) {
+  const { createInputChangeHandler } = useFormFields(setFormData)
   return (
     <Card className="transition-all duration-700 animate-in fade-in slide-in-from-bottom-8">
             <CardContent>
@@ -22,28 +33,30 @@ export function AttendanceField({ formData, setFormData }: {
                 </div>
                 <div className="space-y-3">
                     <div className="space-y-2">
-                        <Label htmlFor="localidade" className="text-sm font-medium">
+                        <Label htmlFor="presidencia" className="text-sm font-medium">
                             Presidência
                         </Label>
                         <Input
                             id="presidencia"
                             placeholder="Digite o nome do irmão da presidência"
                             value={formData.atendimentoPresidencia}
-                            onChange={(e) => setFormData({ ...formData, atendimentoPresidencia: e.target.value })}
+                            onChange={createInputChangeHandler("atendimentoPresidencia")}
+                            maxLength={MAX_NAME_LENGTH}
                             className="h-12 text-base"
                             autoFocus
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="localidade" className="text-sm font-medium">
+                        <Label htmlFor="regencia" className="text-sm font-medium">
                             Regência
                         </Label>
                         <Input
                             id="regencia"
                             placeholder="Digite o nome do irmão na regência"
                             value={formData.atendimentoRegencia}
-                            onChange={(e) => setFormData({ ...formData, atendimentoRegencia: e.target.value })}
+                            onChange={createInputChangeHandler("atendimentoRegencia")}
+                            maxLength={MAX_NAME_LENGTH}
                             className="h-12 text-base"
                             autoFocus
                         />

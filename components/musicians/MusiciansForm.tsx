@@ -1,58 +1,32 @@
 "use client"
 
+{/* UI COMPONENTS */}
 import { Card, CardContent } from "@/components/ui/card"
-import { Music2} from "lucide-react"
+
+{/* ICONS */}
+import { Music2 } from "lucide-react"
+
+{/* TYPES */}
 import type { FormDataType, SetFormDataType } from "@/lib/types"
-import { instruments } from "@/lib/constants"
-import { useMemo } from "react"
+
+{/* FIELDS */}
 import { InstrumentsField } from "./fields/InstrumentsField"
 import { OrganistsField } from "./fields/OrganistsField"
 
-export default function MusiciansField({
-  formData,
-  setFormData,
-}: {
+{/* HOOKS */}
+import { useOrganistCount } from "@/hooks/useOrganistCount"
+import { useInstrumentCount } from "@/hooks/useInstrumentCount"
+import { useTotalsCount } from "@/hooks/useTotalsCount"
+
+interface MusiciansFieldProps {
   formData: FormDataType
   setFormData: SetFormDataType
-}) {
-  const updateInstrument = (id: string, value: number) => {
-    setFormData({
-      ...formData,
-      instrumentos: {
-        ...formData.instrumentos,
-        [id]: Math.max(0, value),
-      },
-    })
-  }
+}
 
-  const increment = (id: string) => {
-    const current = formData.instrumentos[id] || 0
-    updateInstrument(id, current + 1)
-  }
-
-  const decrement = (id: string) => {
-    const current = formData.instrumentos[id] || 0
-    updateInstrument(id, current - 1)
-  }
-
-  const totalMusicians = useMemo(() => {
-    return Object.values(formData.instrumentos).reduce((sum, count) => sum + count, 0)
-  }, [formData.instrumentos])
-
-  const totalGeral = useMemo(() => {
-    return totalMusicians + formData.organistas
-  }, [totalMusicians, formData.organistas])
-
-  const groupedInstruments = useMemo(() => {
-    const groups: { [key: string]: typeof instruments } = {}
-    instruments.forEach((instrument) => {
-      if (!groups[instrument.category]) {
-        groups[instrument.category] = []
-      }
-      groups[instrument.category].push(instrument)
-    })
-    return groups
-  }, [])
+export default function MusiciansField({ formData, setFormData }: MusiciansFieldProps) {
+  const totalsCount = useTotalsCount(formData)
+  const instrumentCount = useInstrumentCount(formData, setFormData)
+  const organistCount = useOrganistCount(formData, setFormData)
 
 
   return (
@@ -67,18 +41,24 @@ export default function MusiciansField({
           </div>
 
           <div className="space-y-6">
-            {Object.entries(groupedInstruments).map(([category, categoryInstruments]) => (
+            {Object.entries(instrumentCount.groupedInstruments).map(([category, categoryInstruments]) => (
               <InstrumentsField
                 key={category}
                 formData={formData}
                 category={category}
                 categoryInstruments={categoryInstruments}
-                increment={increment}
-                decrement={decrement}
+                increment={instrumentCount.increment}
+                decrement={instrumentCount.decrement}
+                updateInstrument={instrumentCount.updateInstrument}
               />
             ))}
 
-            <OrganistsField formData={formData} setFormData={setFormData} />
+            <OrganistsField
+              organistas={organistCount.organistas}
+              increment={organistCount.increment}
+              decrement={organistCount.decrement}
+              updateOrganistas={organistCount.updateOrganistas}
+            />
           </div>
         </CardContent>
       </Card>
@@ -89,7 +69,7 @@ export default function MusiciansField({
           <div className="space-y-3">
             <div className="flex justify-between items-center p-3 rounded-lg bg-background/50">
               <span className="text-sm text-muted-foreground">Total de Músicos</span>
-              <span className="text-lg font-bold text-foreground">{totalMusicians}</span>
+              <span className="text-lg font-bold text-foreground">{totalsCount.totalMusicos}</span>
             </div>
             <div className="flex justify-between items-center p-3 rounded-lg bg-background/50">
               <span className="text-sm text-muted-foreground">Total de Organistas</span>
@@ -97,7 +77,7 @@ export default function MusiciansField({
             </div>
             <div className="flex justify-between items-center p-4 rounded-lg bg-primary/10 border border-primary/20">
               <span className="text-base font-semibold text-foreground">Total Geral</span>
-              <span className="text-2xl font-bold text-primary">{totalGeral}</span>
+              <span className="text-2xl font-bold text-primary">{totalsCount.totalOrquestra}</span>
             </div>
           </div>
         </CardContent>
