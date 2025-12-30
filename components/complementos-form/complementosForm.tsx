@@ -49,7 +49,7 @@ export default function ComplementosForm({ formData, setFormData }: Complementos
       </Card>
 
       {/* Card de Conferência */}
-      <Card className="border-border/50 bg-primary/5 backdrop-blur-sm shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
+      <Card className="border-border/50 bg-primary/5 backdrop-blur-sm shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-700">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Resumo dos Complementos</CardTitle>
         </CardHeader>

@@ -15,6 +15,7 @@ import { useMemo } from "react"
 
 {/* GUARD */}
 import { canProceedToNextStep } from "@/lib/formGuards"
+import { Button } from "../ui/button"
 
 
 interface GeneralFormProps {
@@ -58,13 +59,14 @@ export default function GeneralForm({ formData, setFormData, currentStep, onNext
       )}
 
       {currentStep >= 0 && (
-        <button
+        <Button
           type="submit"
-          className="w-full h-12 text-base font-medium transition-all duration-300 animate-in fade-in slide-in-from-bottom-4 bg-primary text-primary-foreground rounded-md"
+
+          className="w-full h-12 text-base font-medium transition-all duration-300 animate-in fade-in slide-in-from-bottom-4 bg-primary text-primary-foreground rounded-md disabled:bg-primary/90"
           disabled={!canProceed}
         >
           {currentStep < 2 ? "Continuar" : "Próximo"}
-        </button>
+        </Button>
       )}
     </form>
   )

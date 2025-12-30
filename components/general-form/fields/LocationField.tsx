@@ -48,6 +48,7 @@ export function LocationField({
               <h2 className="text-lg font-semibold">Localidade</h2>
             </div>
             <Button
+              type="reset"
               onClick={onReset}
               variant="outline"
               className="flex-1 max-w-38 border-blue-700 text-blue-400 hover:bg-blue-800"
