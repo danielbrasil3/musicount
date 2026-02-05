@@ -1,10 +1,12 @@
-import { useCallback } from "react"
 import type { FormDataType } from "@/lib/types"
-import { eventTypes, instruments, ministerioTypes } from "@/lib/constants"
+import { instruments } from "@/lib/constants"
 import { jsPDF } from "jspdf"
-import { sanitizeForPDF, formatDate, validateDate, chunkArray } from "@/lib/validation"
+import { sanitizeForPDF, formatDate, chunkArray } from "@/lib/validation"
 import { validatePDFDataAsArray } from "@/lib/schemas"
 import { poppinsRegular, poppinsBold } from "@/assets/fonts/poppins"
+import { getInstrumentLabel, getMinisterioLabel, getTipoEventoLabel } from "@/lib/labels"
+
+let ensaioBackgroundBase64Promise: Promise<string> | null = null
 
 export function usePDFGenerator(formData: FormDataType) {
 
@@ -28,28 +30,8 @@ export function usePDFGenerator(formData: FormDataType) {
     });
   }
 
-  const getTipoEventoLabel = useCallback(
-    (id: string) => {
-      return eventTypes.find((e) => e.id === id)?.label || id
-    },
-    [],
-  )
 
-  const getInstrumentLabel = useCallback(
-    (id: string) => {
-      return instruments.find((i) => i.id === id)?.label || id
-    },
-    [],
-  )
-
-  const getMinisterioLabel = useCallback(
-    (id: string) => {
-      return ministerioTypes.find((m) => m.id === id)?.label || id
-    },
-    [],
-  )
-
-  const generatePDFWithBlob = useCallback(async (): Promise<Blob | null> => {
+  const generatePDFWithBlob = async (): Promise<Blob | null> => {
     try {
       // Validação com Zod antes de gerar PDF
       const validation = validatePDFDataAsArray(formData)
@@ -65,9 +47,13 @@ export function usePDFGenerator(formData: FormDataType) {
       doc.addFileToVFS("Poppins-Bold.ttf", poppinsBold)
       doc.addFont("Poppins-Bold.ttf", "Poppins", "bold")
 
-      const bgBase64 = await imageToBase64("/ENSAIO.jpg");
+      if (!ensaioBackgroundBase64Promise) {
+        ensaioBackgroundBase64Promise = imageToBase64("/ENSAIO.jpg")
+      }
 
-      doc.addImage(bgBase64, "PNG", 0, 0, 210, 297);
+      const bgBase64 = await ensaioBackgroundBase64Promise
+
+      doc.addImage(bgBase64, "PNG", 0, 0, 210, 297)
 
       const pageWidth = doc.internal.pageSize.getWidth()
       const pageHeight = doc.internal.pageSize.getHeight()
@@ -346,7 +332,7 @@ export function usePDFGenerator(formData: FormDataType) {
       console.error("Erro ao gerar PDF:", error)
       return null
     }
-  }, [formData, getTipoEventoLabel, getInstrumentLabel, getMinisterioLabel])
+  }
 
   return {
     generatePDFWithBlob,

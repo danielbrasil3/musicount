@@ -2,8 +2,6 @@
 import * as React from "react"
 
 {/*UI COMPONENTS*/}
-import { Button } from "@/components/ui/button"
-
 import PreviousNextButton from "@/components/previousnextButton/Buttons"
 
 {/*FORM COMPONENTS*/}
@@ -14,7 +12,7 @@ import { ComplementosForm } from "@/components/complementos-form"
 import { PreviewField } from "@/components/previewContainer"
 
 {/*ICONS*/}
-import { Music, ArrowBigLeftDash } from "lucide-react"
+import { Music } from "lucide-react"
 {/*LIBS*/ }
 import type { FormStep } from "@/lib/types"
 import { STEP_ORDER } from "@/lib/constants"
@@ -80,7 +78,7 @@ export default function Home() {
             onReset={goToInitialStep}
           />
         )}
-        
+
         {/*Form Musicos*/}
         {currentFormStep === "musicians" && (
           <div className="space-y-4">
