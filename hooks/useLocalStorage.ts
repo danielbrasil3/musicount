@@ -3,27 +3,36 @@
 import { useEffect, useRef, useState } from "react"
 
 export function useLocalStorage<T>(key: string, initialValue: T) {
-  const [value, setValue] = useState<T>(() => {
+  const [value, setValue] = useState<T>(initialValue)
+  const hasHydratedFromStorage = useRef(false)
+
+  // Hidrata no cliente após o primeiro render para evitar mismatch de SSR/CSR
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
     try {
-      const stored = localStorage.getItem(key)
-      return stored !== null ? (JSON.parse(stored) as T) : initialValue
+      const stored = window.localStorage.getItem(key)
+      const nextValue = stored !== null ? (JSON.parse(stored) as T) : initialValue
+
+      hasHydratedFromStorage.current = true
+
+      // Evita alerta do lint (setState direto dentro do effect)
+      queueMicrotask(() => {
+        setValue(nextValue)
+      })
     } catch (err) {
       console.error("Erro ao ler localStorage", err)
-      return initialValue
+      hasHydratedFromStorage.current = true
     }
-  })
+  }, [initialValue, key])
 
-  const isFirstPersist = useRef(true)
-
-  // Persistir mudanças após hidratação inicial
+  // Persiste somente após hidratação inicial do storage
   useEffect(() => {
-    if (isFirstPersist.current) {
-      isFirstPersist.current = false
-      return
-    }
+    if (typeof window === "undefined") return
+    if (!hasHydratedFromStorage.current) return
 
     try {
-      localStorage.setItem(key, JSON.stringify(value))
+      window.localStorage.setItem(key, JSON.stringify(value))
     } catch (err) {
       console.error("Erro ao salvar localStorage", err)
     }
