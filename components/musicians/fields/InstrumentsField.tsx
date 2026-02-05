@@ -47,17 +47,17 @@ export function InstrumentsField({
               className="flex items-center justify-between p-3 rounded-lg border border-border hover:bg-accent/30 transition-colors gap-3"
             >
               {/* Quadrado para imagem do instrumento */}
-              <div className="w-12 h-12 rounded-md bg-muted shrink-0 overflow-hidden border border-border/50">
+              <div className="relative w-16 h-16 rounded-md bg-muted shrink-0 overflow-hidden border border-border/50">
                 {/* Espaço reservado para imagem - será preenchido com img ou ícone */}
-                {/** 
+                
                 <Image
                   src={`/instruments/${instrument.id}.png`}
-                  width={100}
-                  height={100}
                   alt={instrument.label}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-contain transition-transform duration-300 hover:scale-110"
+                  sizes="56px"
                 />
-                **/}
+                
               </div>
 
               {/* Label do instrumento */}

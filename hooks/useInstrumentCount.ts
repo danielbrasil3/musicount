@@ -17,15 +17,15 @@ export function useInstrumentCount(
 
   const updateInstrument = useCallback(
     (id: string, value: number) => {
-      setFormData({
-        ...formData,
+      setFormData((prev) => ({
+        ...prev,
         instrumentos: {
-          ...formData.instrumentos,
+          ...prev.instrumentos,
           [id]: Math.max(0, value),
         },
-      })
+      }))
     },
-    [formData, setFormData],
+    [setFormData],
   )
 
 
