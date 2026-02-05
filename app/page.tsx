@@ -1,13 +1,21 @@
 "use client"
 import * as React from "react"
+
 {/*UI COMPONENTS*/}
+import { Button } from "@/components/ui/button"
+
+import PreviousNextButton from "@/components/previousnextButton/Buttons"
+
+{/*FORM COMPONENTS*/}
 import { GeralForm } from "@/components/general-form"
 import { MusiciansForm } from "@/components/musicians"
-import { ComplementosForm } from "@/components/complementos-form"
-import { Button } from "@/components/ui/button"
-import { Music, ArrowBigLeftDash } from "lucide-react"
 import { ComparecimentoForm } from "@/components/comparecimento-form"
+import { ComplementosForm } from "@/components/complementos-form"
 import { PreviewField } from "@/components/previewContainer"
+
+{/*ICONS*/}
+import { Music, ArrowBigLeftDash } from "lucide-react"
+{/*LIBS*/ }
 import type { FormStep } from "@/lib/types"
 import { STEP_ORDER } from "@/lib/constants"
 
@@ -23,6 +31,7 @@ export default function Home() {
 
   const currentStepIndex = STEP_ORDER.indexOf(currentFormStep)
 
+  {/*Proximo passo*/}
   const goToNextStep = () => {
     const nextIndex = currentStepIndex + 1
     if (nextIndex < STEP_ORDER.length) {
@@ -30,6 +39,7 @@ export default function Home() {
     }
   }
 
+  {/*Passo anterior*/}
   const goToPreviousStep = () => {
     if (currentFormStep === "geral" && generalStep > 0) {
       setGeneralStep((s) => s - 1)
@@ -38,20 +48,13 @@ export default function Home() {
     }
   }
 
+  {/*Voltar ao inicio*/}
   const goToInitialStep = () => {
     resetForm()
     setCurrentFormStep("geral")
     setGeneralStep(0)
   }
 
-  function handleNextFromGeneral(e: React.FormEvent) {
-    e.preventDefault()
-    if (generalStep < 2) {
-      setGeneralStep((s) => s + 1)
-    } else {
-      goToNextStep()
-    }
-  }
 
   return (
     <main className="min-h-screen bg-background">
@@ -68,89 +71,44 @@ export default function Home() {
           </div>
         </div>
 
+        {/*Form Informaçoes Gerais*/}
         {currentFormStep === "geral" && (
           <GeralForm
             formData={formData}
             setFormData={setFormData}
-            currentStep={generalStep}
-            onNext={handleNextFromGeneral}
+            onNext={goToNextStep}
             onReset={goToInitialStep}
           />
         )}
-
+        
+        {/*Form Musicos*/}
         {currentFormStep === "musicians" && (
           <div className="space-y-4">
             <MusiciansForm formData={formData} setFormData={setFormData} />
-
-            <div className="flex items-center mt-4">
-              <Button
-                onClick={goToPreviousStep}
-                variant="outline"
-                className="flex-1 max-w-26 border-zinc-700 text-zinc-100 hover:bg-zinc-800"
-              >
-                <ArrowBigLeftDash className="w-4 h-4 mr-2" />
-                Voltar
-              </Button>
-              <Button className="ml-2" onClick={goToNextStep}>
-                Próximo
-              </Button>
-            </div>
+            <PreviousNextButton onClickNext={goToNextStep} onClickPrevious={goToPreviousStep} currentFormStep={currentFormStep}/>
           </div>
         )}
 
+        {/*Form Comparecimento*/}
         {currentFormStep === "comparecimento" && (
           <div className="space-y-4">
             <ComparecimentoForm formData={formData} setFormData={setFormData} />
-
-            <div className="flex items-center mt-4">
-              <Button
-                onClick={goToPreviousStep}
-                variant="outline"
-                className="flex-1 max-w-26 border-zinc-700 text-zinc-100 hover:bg-zinc-800"
-              >
-                <ArrowBigLeftDash className="w-4 h-4 mr-2" />
-                Voltar
-              </Button>
-              <Button className="ml-2" onClick={goToNextStep}>
-                Próximo
-              </Button>
-            </div>
+            <PreviousNextButton onClickNext={goToNextStep} onClickPrevious={goToPreviousStep} currentFormStep={currentFormStep}/>
           </div>
         )}
 
+        {/*Form Complementos*/}
         {currentFormStep === "complementos" && (
           <div className="space-y-4">
             <ComplementosForm formData={formData} setFormData={setFormData} />
-
-            <div className="flex items-center mt-4">
-              <Button
-                onClick={goToPreviousStep}
-                variant="outline"
-                className="flex-1 max-w-26 border-zinc-700 text-zinc-100 hover:bg-zinc-800"
-              >
-                <ArrowBigLeftDash className="w-4 h-4 mr-2" />
-                Voltar
-              </Button>
-              <Button className="ml-auto" onClick={goToNextStep}>
-                Concluir
-              </Button>
-            </div>
+            <PreviousNextButton onClickNext={goToNextStep} onClickPrevious={goToPreviousStep} currentFormStep={currentFormStep}/>
           </div>
         )}
 
+        {/*Preview Container*/}
         {currentFormStep === "preview" && (
           <div className="space-y-4">
-
-            <div className="flex items-center mt-4">
-              <Button
-                onClick={goToPreviousStep}
-                variant="outline"
-                className="flex-1 max-w-26 border-zinc-700 text-zinc-100 hover:bg-zinc-800"
-              >
-                <ArrowBigLeftDash className="w-4 h-4 mr-2" />
-                Voltar
-              </Button>
-            </div>
+            <PreviousNextButton onClickNext={goToNextStep} onClickPrevious={goToPreviousStep} currentFormStep={currentFormStep}/>
             <PreviewField formData={formData} onReset={goToInitialStep} />
           </div>
         )}

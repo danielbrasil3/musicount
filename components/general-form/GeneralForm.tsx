@@ -1,6 +1,6 @@
 "use client"
 
-import type React from "react"
+import { useState } from "react"
 
 {/* FIELDS */}
 import { EventTypeField } from "./fields/EventTypeField"
@@ -21,21 +21,31 @@ import { Button } from "../ui/button"
 interface GeneralFormProps {
   formData: FormDataType
   setFormData: SetFormDataType
-  currentStep: number
-  onNext: (e: React.FormEvent) => void
+  onNext: () => void
   onReset: () => void
 }
 
-export default function GeneralForm({ formData, setFormData, currentStep, onNext, onReset}: GeneralFormProps) {
+export default function GeneralForm({ formData, setFormData, onNext, onReset}: GeneralFormProps) {
+  const [currentStep, setCurrentStep] = useState(0)
+
+  function handleNext(e: React.FormEvent) {
+      e.preventDefault()
+      if (currentStep < 2) {
+        setCurrentStep((s) => s + 1)
+      } else {
+        onNext()
+      }
+    }
+
   const canProceed = useMemo(
     () => canProceedToNextStep(currentStep, formData),
     [currentStep, formData],
   )
 
 
-
+  
   return (
-    <form onSubmit={onNext} className="space-y-6">
+    <form onSubmit={handleNext} className="space-y-6">
       {/* Localidade */}
       <LocationField
         currentStep={currentStep}
