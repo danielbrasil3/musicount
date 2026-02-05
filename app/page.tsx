@@ -1,20 +1,14 @@
 "use client"
 import * as React from "react"
+import dynamic from "next/dynamic"
 
 {/*UI COMPONENTS*/}
-import { Button } from "@/components/ui/button"
-
 import PreviousNextButton from "@/components/previousnextButton/Buttons"
 
 {/*FORM COMPONENTS*/}
-import { GeralForm } from "@/components/general-form"
-import { MusiciansForm } from "@/components/musicians"
-import { ComparecimentoForm } from "@/components/comparecimento-form"
-import { ComplementosForm } from "@/components/complementos-form"
-import { PreviewField } from "@/components/previewContainer"
 
 {/*ICONS*/}
-import { Music, ArrowBigLeftDash } from "lucide-react"
+import { Music } from "lucide-react"
 {/*LIBS*/ }
 import type { FormStep } from "@/lib/types"
 import { STEP_ORDER } from "@/lib/constants"
@@ -22,6 +16,12 @@ import { STEP_ORDER } from "@/lib/constants"
 
 {/*HOOKS*/}
 import { usePersistedForm } from "@/hooks/usePersistedForm"
+
+const GeralForm = dynamic(() => import("@/components/general-form").then((module) => module.GeralForm))
+const MusiciansForm = dynamic(() => import("@/components/musicians").then((module) => module.MusiciansForm))
+const ComparecimentoForm = dynamic(() => import("@/components/comparecimento-form").then((module) => module.ComparecimentoForm))
+const ComplementosForm = dynamic(() => import("@/components/complementos-form").then((module) => module.ComplementosForm))
+const PreviewField = dynamic(() => import("@/components/previewContainer").then((module) => module.PreviewField))
 
 export default function Home() {
   const [currentFormStep, setCurrentFormStep] = React.useState<FormStep>("geral")
