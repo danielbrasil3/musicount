@@ -1,15 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
 import "./globals.css"
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-  preload: true,
-  fallback: ["system-ui", "arial"],
-})
 
 export const metadata: Metadata = {
   title: "Controle de Ensaios Musicais",
@@ -41,12 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className="dark">
-      <head>
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      </head>
-      <body className={`${inter.variable} font-sans antialiased`}>
-        {children}
-      </body>
+      <body className="font-sans antialiased">{children}</body>
     </html>
   )
 }

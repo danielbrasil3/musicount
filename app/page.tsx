@@ -80,7 +80,7 @@ export default function Home() {
             onReset={goToInitialStep}
           />
         )}
-        
+
         {/*Form Musicos*/}
         {currentFormStep === "musicians" && (
           <div className="space-y-4">
