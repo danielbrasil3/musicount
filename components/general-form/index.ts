@@ -1,1 +1,1 @@
-export { default as GeralForm } from "./generalForm"
+export { default as GeneralForm } from "./generalForm"
