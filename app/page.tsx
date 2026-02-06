@@ -5,7 +5,7 @@ import * as React from "react"
 import PreviousNextButton from "@/components/previousnextButton/Buttons"
 
 {/*FORM COMPONENTS*/}
-import { GeralForm } from "@/components/general-form"
+import { GeneralForm } from "@/components/general-form"
 import { MusiciansForm } from "@/components/musicians"
 import { ComparecimentoForm } from "@/components/comparecimento-form"
 import { ComplementosForm } from "@/components/complementos-form"
@@ -72,7 +72,7 @@ export default function Home() {
 
           {/*Form Informaçoes Gerais*/}
           {currentFormStep === "geral" && (
-            <GeralForm
+            <GeneralForm
               formData={formData}
               setFormData={setFormData}
               onNext={goToNextStep}
