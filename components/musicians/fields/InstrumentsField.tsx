@@ -14,7 +14,6 @@ import { categoryLabels } from "@/lib/constants"
 import { instruments } from "@/lib/constants"
 import { validateNumber } from "@/lib/validation"
 
-import Image from "next/image"
 
 interface InstrumentsFieldProps {
   formData: FormDataType
@@ -50,13 +49,14 @@ export function InstrumentsField({
               <div className="relative w-16 h-16 rounded-md bg-muted shrink-0 overflow-hidden border border-border/50">
                 {/* Espaço reservado para imagem - será preenchido com img ou ícone */}
                 
-                <Image
-                  src={`/instruments/${instrument.id}.png`}
-                  alt={instrument.label}
-                  fill
-                  className="object-contain transition-transform duration-300 hover:scale-110"
-                  sizes="56px"
+                <img
+                  src={`/instruments/${instrument.id}.webp`}
+                  width={56}
+                  height={56}
+                  loading="lazy"
+                  decoding="async"
                 />
+
                 
               </div>
 

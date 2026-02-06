@@ -1,21 +1,27 @@
-const CACHE_NAME = "musicount-v1"
+const STATIC_CACHE = "musicount-static-v1"
+const IMAGE_CACHE = "musicount-images-v1"
 const OFFLINE_URL = "/offline"
+
 const PRECACHE_URLS = ["/", OFFLINE_URL, "/icon.png"]
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(PRECACHE_URLS)
-    })
+    Promise.all([
+      caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE_URLS)),
+    ])
   )
   self.skipWaiting()
 })
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
-    })
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys
+          .filter((key) => ![STATIC_CACHE, IMAGE_CACHE].includes(key))
+          .map((key) => caches.delete(key))
+      )
+    )
   )
   self.clients.claim()
 })
@@ -23,44 +29,61 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return
 
-  const requestURL = new URL(event.request.url)
+  const url = new URL(event.request.url)
 
-  if (requestURL.origin !== self.location.origin) return
+  if (url.origin !== self.location.origin) return
 
-  // Navegação: network-first com fallback offline
+  if (url.pathname.startsWith("/instruments/")) {
+    event.respondWith(
+      caches.open(IMAGE_CACHE).then(async (cache) => {
+        const cached = await cache.match(event.request)
+        if (cached) return cached
+
+        const response = await fetch(event.request)
+        if (response && response.status === 200) {
+          cache.put(event.request, response.clone())
+        }
+        return response
+      })
+    )
+    return
+  }
+
   if (event.request.mode === "navigate") {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
-          const responseClone = response.clone()
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone))
+          const clone = response.clone()
+          caches.open(STATIC_CACHE).then((cache) => cache.put(event.request, clone))
           return response
         })
         .catch(async () => {
-          const cachedResponse = await caches.match(event.request)
-          if (cachedResponse) return cachedResponse
-
-          const offlinePage = await caches.match(OFFLINE_URL)
-          return offlinePage || Response.error()
+          const cached = await caches.match(event.request)
+          return cached || (await caches.match(OFFLINE_URL))
         })
     )
     return
   }
 
-  // Assets: cache-first com atualização em background
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      const fetchPromise = fetch(event.request)
-        .then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const responseClone = networkResponse.clone()
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone))
+    caches.match(event.request).then((cached) => {
+      return (
+        cached ||
+        fetch(event.request).then((response) => {
+          if (!response || response.status !== 200) {
+            return response
           }
-          return networkResponse
-        })
-        .catch(() => cachedResponse)
 
-      return cachedResponse || fetchPromise
+          const responseClone = response.clone()
+
+          caches.open(STATIC_CACHE).then((cache) => {
+            cache.put(event.request, responseClone)
+          })
+
+          return response
+        })
+      )
     })
   )
+
 })
