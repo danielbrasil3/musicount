@@ -1,0 +1,6 @@
+{
+  "telemetryDisabled": true,
+  "turbopack": {
+    "root": "."
+  }
+}

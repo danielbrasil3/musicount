@@ -1,6 +1,6 @@
 const CACHE_NAME = "musicount-v1"
 const OFFLINE_URL = "/offline"
-const PRECACHE_URLS = ["/", OFFLINE_URL, "/ENSAIO.png"]
+const PRECACHE_URLS = ["/", OFFLINE_URL, "/icon.png"]
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

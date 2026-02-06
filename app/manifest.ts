@@ -12,17 +12,17 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: "pt-BR",
     icons: [
       {
-        src: "/ENSAIO.png",
+        src: "/icon.png",
         sizes: "192x192",
         type: "image/png",
       },
       {
-        src: "/ENSAIO.png",
+        src: "/icon.png",
         sizes: "512x512",
         type: "image/png",
       },
       {
-        src: "/ENSAIO.png",
+        src: "/icon.png",
         sizes: "180x180",
         type: "image/png",
         purpose: "any",
