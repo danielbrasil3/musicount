@@ -23,19 +23,33 @@ import { GeneratePDFButton } from "./fields/generatePDFButton"
 {/* ALERTS */}
 import ErrorAlert from "@/components/alerts/errorAlert"
 import ValidationErrorsAlert from "@/components/alerts/validationErrorsAlert"
+import { usePersistedForm } from "@/hooks/usePersistedForm"
+import { INITIAL_GENERAL, INITIAL_MUSICIANS, INITIAL_COMPARECIMENTO, INITIAL_COMPLEMENTOS } from "@/lib/constants"
 
 interface PreviewFieldProps {
-  formData: FormDataType
   onReset: () => void
 }
 
-export default function PreviewField({ formData, onReset }: PreviewFieldProps) {
+export default function PreviewField({ onReset }: PreviewFieldProps) {
+  const { formData: generalData } = usePersistedForm("general", INITIAL_GENERAL)
+  const { formData: musiciansData } = usePersistedForm("musicians", INITIAL_MUSICIANS)
+  const { formData: comparecimentoData } = usePersistedForm("comparecimento", INITIAL_COMPARECIMENTO)
+  const { formData: complementosData } = usePersistedForm("complementos", INITIAL_COMPLEMENTOS)
+
+  // Combinar todos os dados separados em um único FormDataType
+  const formData = {
+    ...generalData,
+    ...musiciansData,
+    ...comparecimentoData,
+    ...complementosData,
+  }
+
   const { pdfUrl, error, validationErrors, generate, close } = usePDFPreview(formData)
   const { getTipoEventoLabel, getInstrumentLabel, getMinisterioLabel } = usePDFGenerator(formData)
 
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="space-y-6">
       
       {/* Error Alert */}
       {error && <ErrorAlert message={error} />}

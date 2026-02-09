@@ -1,5 +1,5 @@
 import { useCallback } from "react"
-import type { FormDataType, SetFormDataType } from "@/lib/types"
+import type { ComplementosInfo, SetComplementosInfo } from "@/lib/types"
 
 interface UseComplementsReturn {
   hinos: string[]
@@ -10,8 +10,8 @@ interface UseComplementsReturn {
 }
 
 export function useComplements(
-  formData: FormDataType,
-  setFormData: SetFormDataType,
+  formData: ComplementosInfo,
+  setFormData: SetComplementosInfo,
 ): UseComplementsReturn {
 
 

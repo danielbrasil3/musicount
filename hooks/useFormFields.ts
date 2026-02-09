@@ -1,28 +1,32 @@
-
-import type { FormDataType } from "@/lib/types"
+import { useCallback } from "react"
+import type { GeneralInfo } from "@/lib/types"
 import { validateString, MAX_NAME_LENGTH, MAX_LOCALIDADE_LENGTH } from "@/lib/validation"
 
 
 
 export function useFormFields(
-  setFormData: React.Dispatch<React.SetStateAction<FormDataType>>,
+  setFormData: React.Dispatch<React.SetStateAction<GeneralInfo>>,
 ) {
-  const setFieldValue = 
-    (key: keyof FormDataType, value: string) => {
+  const setFieldValue = useCallback(
+    (key: keyof GeneralInfo, value: string) => {
       setFormData((prev) => ({
         ...prev,
         [key]: value,
       }))
-    }
+    },
+    [setFormData]
+  )
 
-  const createInputChangeHandler =
-    (key: keyof FormDataType) => {
+  const createInputChangeHandler = useCallback(
+    (key: keyof GeneralInfo) => {
       return (e: React.ChangeEvent<HTMLInputElement>) => {
         const validatedValue = validateString(e.target.value, key === "localidade" ? MAX_LOCALIDADE_LENGTH : MAX_NAME_LENGTH)
         const nomeCapitalizado = validatedValue.charAt(0).toUpperCase() + validatedValue.substring(1).toLowerCase()
         setFieldValue(key, nomeCapitalizado)
       }
-    }
+    },
+    [setFieldValue]
+  )
 
   return { setFieldValue, createInputChangeHandler }
 }

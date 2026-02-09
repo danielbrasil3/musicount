@@ -5,11 +5,11 @@ import * as React from "react"
 import PreviousNextButton from "@/components/previousnextButton/Buttons"
 
 {/*FORM COMPONENTS*/}
-import { GeneralForm } from "@/components/general-form"
+import GeneralForm from "@/components/general-form/GeneralForm"
 import { MusiciansForm } from "@/components/musicians"
-import { ComparecimentoForm } from "@/components/comparecimento-form"
-import { ComplementosForm } from "@/components/complementos-form"
-import { PreviewField } from "@/components/previewContainer"
+import ComparecimentoForm from "@/components/comparecimento-form/comparecimentoForm"
+import ComplementosForm from "@/components/complementos-form/complementosForm"
+import PreviewField from "@/components/previewContainer/previewField"
 
 {/*ICONS*/}
 import { Music } from "lucide-react"
@@ -19,52 +19,49 @@ import { STEP_ORDER } from "@/lib/constants"
 
 
 {/*HOOKS*/}
-import { usePersistedForm } from "@/hooks/usePersistedForm"
+
 
 export default function Home() {
   const [currentFormStep, setCurrentFormStep] = React.useState<FormStep>("geral")
   const [generalStep, setGeneralStep] = React.useState(0)
-  const {formData, setFormData, resetForm} = usePersistedForm()
-
 
   const currentStepIndex = STEP_ORDER.indexOf(currentFormStep)
 
   {/*Proximo passo*/}
-  const goToNextStep = () => {
+  const goToNextStep = React.useCallback(() => {
     const nextIndex = currentStepIndex + 1
     if (nextIndex < STEP_ORDER.length) {
       setCurrentFormStep(STEP_ORDER[nextIndex])
     }
-  }
+  }, [currentStepIndex])
 
   {/*Passo anterior*/}
-  const goToPreviousStep = () => {
+  const goToPreviousStep = React.useCallback(() => {
     if (currentFormStep === "geral" && generalStep > 0) {
       setGeneralStep((s) => s - 1)
     } else if (currentStepIndex > 0) {
       setCurrentFormStep(STEP_ORDER[currentStepIndex - 1])
     }
-  }
+  }, [generalStep, currentFormStep, currentStepIndex])
 
   {/*Voltar ao inicio*/}
-  const goToInitialStep = () => {
-    resetForm()
+  const goToInitialStep = React.useCallback(() => {
     setCurrentFormStep("geral")
     setGeneralStep(0)
-  }
+  }, [])
 
 
   return (
     <>
       <main className="min-h-screen bg-background">
         <div className="container max-w-2xl mx-auto px-4 py-8">
-          <div className="mb-8 animate-in fade-in slide-in-from-top-4 duration-700">
+          <div className="mb-8">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-xl bg-primary/10">
-                <Music className="w-8 h-8 text-primary " />
+                <Music className="w-8 h-8 text-primary" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold tracking-tight text-foreground" style={{ contentVisibility: "auto" }}>Controle de Ensaios</h1>
+                <h1 className="text-2xl font-bold tracking-tight text-foreground">Controle de Ensaios</h1>
                 <p className="text-sm text-muted-foreground">Registre as informações do ensaio musical</p>
               </div>
             </div>
@@ -73,8 +70,6 @@ export default function Home() {
           {/*Form Informaçoes Gerais*/}
           {currentFormStep === "geral" && (
             <GeneralForm
-              formData={formData}
-              setFormData={setFormData}
               onNext={goToNextStep}
               onReset={goToInitialStep}
             />
@@ -83,7 +78,7 @@ export default function Home() {
           {/*Form Musicos*/}
           {currentFormStep === "musicians" && (
             <div className="space-y-4">
-              <MusiciansForm formData={formData} setFormData={setFormData} />
+              <MusiciansForm />
               <PreviousNextButton onClickNext={goToNextStep} onClickPrevious={goToPreviousStep} currentFormStep={currentFormStep}/>
             </div>
           )}
@@ -91,7 +86,7 @@ export default function Home() {
           {/*Form Comparecimento*/}
           {currentFormStep === "comparecimento" && (
             <div className="space-y-4">
-              <ComparecimentoForm formData={formData} setFormData={setFormData} />
+              <ComparecimentoForm />
               <PreviousNextButton onClickNext={goToNextStep} onClickPrevious={goToPreviousStep} currentFormStep={currentFormStep}/>
             </div>
           )}
@@ -99,7 +94,7 @@ export default function Home() {
           {/*Form Complementos*/}
           {currentFormStep === "complementos" && (
             <div className="space-y-4">
-              <ComplementosForm formData={formData} setFormData={setFormData} />
+              <ComplementosForm />
               <PreviousNextButton onClickNext={goToNextStep} onClickPrevious={goToPreviousStep} currentFormStep={currentFormStep}/>
             </div>
           )}
@@ -108,7 +103,7 @@ export default function Home() {
           {currentFormStep === "preview" && (
             <div className="space-y-4">
               <PreviousNextButton onClickNext={goToNextStep} onClickPrevious={goToPreviousStep} currentFormStep={currentFormStep}/>
-              <PreviewField formData={formData} onReset={goToInitialStep} />
+              <PreviewField  onReset={goToInitialStep} />
             </div>
           )}
         </div>

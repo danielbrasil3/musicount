@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react"
-import type { FormDataType, SetFormDataType } from "@/lib/types"
+import type { ComparecimentoInfo, SetComparecimentoInfo } from "@/lib/types"
 
-export function useIrmandadeCount(formData: FormDataType, setFormData: SetFormDataType) {
+export function useIrmandadeCount(formData: ComparecimentoInfo, setFormData: SetComparecimentoInfo) {
   const setIrmandadeCount = useCallback(
     (field: "irmas" | "irmaos", value: number) => {
       setFormData((prev) => ({

@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { memo } from "react"
 
 {/* ICONS */}
 import { MapPin, Plus } from "lucide-react"
@@ -14,20 +15,20 @@ import { MAX_LOCALIDADE_LENGTH } from "@/lib/validation"
 import { useFormFields } from "@/hooks/useFormFields"
 
 {/* TYPES */}
-import type { FormDataType, SetFormDataType } from "@/lib/types"
+import type { SetGeneralInfo } from "@/lib/types"
 
 
 
 interface LocationFieldProps {
   currentStep: number
-  formData: FormDataType
-  setFormData: SetFormDataType
+  localidade: string
+  setFormData: SetGeneralInfo
   onReset: () => void
 }
 
-export function LocationField({
+export const LocationField = memo(function LocationField({
   currentStep,
-  formData,
+  localidade,
   setFormData,
   onReset,
 }: LocationFieldProps) {
@@ -35,8 +36,8 @@ export function LocationField({
 
   return (
     <Card
-        className={`transition-all duration-700 ${
-          currentStep >= 0 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8 pointer-events-none absolute"
+        className={`${
+          currentStep >= 0 ? "opacity-100" : "opacity-0 pointer-events-none absolute"
         }`}
       >
         <CardContent>
@@ -64,7 +65,7 @@ export function LocationField({
             <Input
               id="localidade"
               placeholder="Digite o nome da localidade"
-              value={formData.localidade}
+              value={localidade}
               onChange={createInputChangeHandler("localidade")}
               maxLength={MAX_LOCALIDADE_LENGTH}
               className="h-12 text-base"
@@ -73,4 +74,5 @@ export function LocationField({
           </div>
         </CardContent>
       </Card>
-  )}
+  )
+})

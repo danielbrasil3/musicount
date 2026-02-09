@@ -1,7 +1,7 @@
 import { useCallback } from "react"
-import type { FormDataType, SetFormDataType } from "@/lib/types"
+import type { ComparecimentoInfo, SetComparecimentoInfo } from "@/lib/types"
 
-export function useMinisterioCount(formData: FormDataType, setFormData: SetFormDataType) {
+export function useMinisterioCount(formData: ComparecimentoInfo, setFormData: SetComparecimentoInfo) {
   const updateMinisterio = useCallback(
     (type: string, delta: number) => {
       setFormData((prev) => ({

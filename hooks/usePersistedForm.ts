@@ -1,18 +1,18 @@
 import type { FormDataType } from "@/lib/types"
 import { useLocalStorage } from "./useLocalStorage"
-import { INITIAL_FORM_DATA } from "@/lib/constants"
+
 
 const STORAGE_KEY = "ensaio-form"
 
-export function usePersistedForm() {
-  const [formData, setFormData] = useLocalStorage<FormDataType>(STORAGE_KEY, INITIAL_FORM_DATA)
+export function usePersistedForm<T>(key: string, initial: T) {
+  const [formData, setFormData] = useLocalStorage<T>(key, initial)
 
   const resetForm = () => {
     if (typeof window !== "undefined") {
-      window.localStorage.removeItem(STORAGE_KEY)
+      window.localStorage.removeItem(key)
     }
 
-    setFormData(INITIAL_FORM_DATA)
+    setFormData(initial)
   }
 
   return {

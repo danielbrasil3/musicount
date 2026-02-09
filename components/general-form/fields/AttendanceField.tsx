@@ -2,6 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { memo } from "react"
 
 {/* ICONS */}
 import { Users } from "lucide-react"
@@ -13,17 +14,18 @@ import { MAX_NAME_LENGTH } from "@/lib/validation"
 import { useFormFields } from "@/hooks/useFormFields"
 
 {/* TYPES */}
-import type { FormDataType, SetFormDataType } from "@/lib/types"
+import type { SetGeneralInfo } from "@/lib/types"
 
 interface AttendanceFieldProps {
-  formData: FormDataType
-  setFormData: SetFormDataType
+  atendimentoPresidencia: string
+  atendimentoRegencia: string
+  setFormData: SetGeneralInfo
 }
 
-export function AttendanceField({ setFormData, formData }: AttendanceFieldProps) {
+export const AttendanceField = memo(function AttendanceField({ setFormData, atendimentoPresidencia, atendimentoRegencia }: AttendanceFieldProps) {
   const { createInputChangeHandler } = useFormFields(setFormData)
   return (
-    <Card className="transition-all duration-700 animate-in fade-in slide-in-from-bottom-8">
+    <Card className="transition-all duration-700">
             <CardContent>
                 <div className="flex items-center gap-3 mb-4">
                     <div className="p-2 rounded-lg bg-primary/10">
@@ -39,7 +41,7 @@ export function AttendanceField({ setFormData, formData }: AttendanceFieldProps)
                         <Input
                             id="presidencia"
                             placeholder="Digite o nome do irmão da presidência"
-                            value={formData.atendimentoPresidencia}
+                            value={atendimentoPresidencia}
                             onChange={createInputChangeHandler("atendimentoPresidencia")}
                             maxLength={MAX_NAME_LENGTH}
                             className="h-12 text-base"
@@ -54,7 +56,7 @@ export function AttendanceField({ setFormData, formData }: AttendanceFieldProps)
                         <Input
                             id="regencia"
                             placeholder="Digite o nome do irmão na regência"
-                            value={formData.atendimentoRegencia}
+                            value={atendimentoRegencia}
                             onChange={createInputChangeHandler("atendimentoRegencia")}
                             maxLength={MAX_NAME_LENGTH}
                             className="h-12 text-base"
@@ -64,5 +66,5 @@ export function AttendanceField({ setFormData, formData }: AttendanceFieldProps)
                 </div>
             </CardContent>
         </Card>
-  )
-}
+    )
+})

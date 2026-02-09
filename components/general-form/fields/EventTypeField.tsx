@@ -12,6 +12,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import { Calendar as CalendarPicker } from "@/components/ui/calendar"
+import { memo, useMemo } from "react"
 
 {/* HOOKS */}
 import { useEventData } from "@/hooks/useEventData"
@@ -23,25 +24,32 @@ import { Calendar as CalendarIcon } from "lucide-react"
 import { eventTypes } from "@/lib/constants"
 
 {/* TYPES */}
-import type { FormDataType, SetFormDataType } from "@/lib/types"
+import type { SetGeneralInfo } from "@/lib/types"
 
 interface EventTypeFieldProps {
   eventoData: string
-  formData: FormDataType
-  setFormData: SetFormDataType
+  eventoHorario: string
+  tipoEvento: string
+  setFormData: SetGeneralInfo
 }
 
-export function EventTypeField({
+export const EventTypeField = memo(function EventTypeField({
   eventoData,
-  formData,
+  eventoHorario,
+  tipoEvento,
   setFormData,
 }: EventTypeFieldProps) {
-  const { date, selectEventDate, setEventTime, setEventType } =
-    useEventData(eventoData, setFormData)
+  const { selectEventDate, setEventTime, setEventType } =
+    useEventData(setFormData)
+
+  const date = useMemo(
+    () => (eventoData ? new Date(eventoData) : undefined),
+    [eventoData]
+  )
 
   
   return (
-    <Card className="transition-all duration-700 animate-in fade-in slide-in-from-bottom-8">
+    <Card className="transition-all duration-700">
       <CardContent className="space-y-3">
         {/* Header */}
         <div className="flex items-center gap-3">
@@ -54,7 +62,7 @@ export function EventTypeField({
         {/* Tipo de Evento */}
         <div className="space-y-3 pt-2">
           <RadioGroup
-            value={formData.tipoEvento}
+            value={tipoEvento}
             onValueChange={setEventType}
             className=""
           >
@@ -116,7 +124,7 @@ export function EventTypeField({
               Horário <span className="text-red-500">*</span>
             </Label>
             <Select
-              value={formData.eventoHorario}
+              value={eventoHorario}
               onValueChange={setEventTime}
               
             >
@@ -140,4 +148,4 @@ export function EventTypeField({
       </CardContent>
     </Card>
   )
-}
+})

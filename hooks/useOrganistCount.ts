@@ -1,5 +1,5 @@
 import { useCallback } from "react"
-import type { FormDataType, SetFormDataType } from "@/lib/types"
+import type { MusiciansInfo, SetMusiciansInfo } from "@/lib/types"
 
 interface UseOrganistCountReturn {
   organistas: number
@@ -10,8 +10,8 @@ interface UseOrganistCountReturn {
 
 
 export function useOrganistCount(
-  formData: FormDataType,
-  setFormData: SetFormDataType,
+  formData: MusiciansInfo,
+  setFormData: SetMusiciansInfo,
 ): UseOrganistCountReturn {
 
   const updateOrganistas = useCallback(

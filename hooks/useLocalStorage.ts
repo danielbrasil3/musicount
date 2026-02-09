@@ -3,33 +3,27 @@
 import { useEffect, useRef, useState } from "react"
 
 export function useLocalStorage<T>(key: string, initialValue: T) {
-  const [value, setValue] = useState<T>(initialValue)
-  const hasHydratedFromStorage = useRef(false)
-
-  // Hidrata no cliente após o primeiro render para evitar mismatch de SSR/CSR
-  useEffect(() => {
-    if (typeof window === "undefined") return
-
+  // Initialize with localStorage value only if available, otherwise use initial
+  const [value, setValue] = useState<T>(() => {
+    // This runs during render to set initial state quickly
+    if (typeof window === "undefined") return initialValue
+    
     try {
       const stored = window.localStorage.getItem(key)
-      const nextValue = stored !== null ? (JSON.parse(stored) as T) : initialValue
-
-      hasHydratedFromStorage.current = true
-
-      // Evita alerta do lint (setState direto dentro do effect)
-      queueMicrotask(() => {
-        setValue(nextValue)
-      })
-    } catch (err) {
-      console.error("Erro ao ler localStorage", err)
-      hasHydratedFromStorage.current = true
+      return stored ? (JSON.parse(stored) as T) : initialValue
+    } catch {
+      return initialValue
     }
-  }, [initialValue, key])
+  })
+  
+  const prev = useRef(value)
 
-  // Persiste somente após hidratação inicial do storage
+  // Persist changes to localStorage
   useEffect(() => {
     if (typeof window === "undefined") return
-    if (!hasHydratedFromStorage.current) return
+    if (Object.is(prev.current, value)) return
+
+    prev.current = value
 
     try {
       window.localStorage.setItem(key, JSON.stringify(value))

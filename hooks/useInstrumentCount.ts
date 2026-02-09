@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from "react"
-import type { FormDataType, SetFormDataType } from "@/lib/types"
+import type { MusiciansInfo, SetMusiciansInfo } from "@/lib/types"
 import { instruments } from "@/lib/constants"
 
 interface UseInstrumentCountReturn {
@@ -11,8 +11,8 @@ interface UseInstrumentCountReturn {
 
 
 export function useInstrumentCount(
-  formData: FormDataType,
-  setFormData: SetFormDataType,
+  formData: MusiciansInfo,
+  setFormData: SetMusiciansInfo,
 ): UseInstrumentCountReturn {
 
   const updateInstrument = useCallback(

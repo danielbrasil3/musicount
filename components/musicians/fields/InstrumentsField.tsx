@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Plus, Minus } from "lucide-react"
 
 {/* TYPES */}
-import type { FormDataType } from "@/lib/types"
+import type { MusiciansInfo } from "@/lib/types"
 
 {/* CONSTANTS */}
 import { categoryLabels } from "@/lib/constants"
@@ -16,7 +16,7 @@ import { validateNumber } from "@/lib/validation"
 
 
 interface InstrumentsFieldProps {
-  formData: FormDataType
+  formData: MusiciansInfo
   category: string
   categoryInstruments: typeof instruments
   increment: (id: string) => void

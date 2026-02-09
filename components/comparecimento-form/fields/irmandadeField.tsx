@@ -11,12 +11,12 @@ import { Plus, Minus, Users } from "lucide-react"
 import { useCallback} from "react"
 import { validateNumber } from "@/lib/validation"
 {/* TYPES */}
-import type { FormDataType } from "@/lib/types"
+import type { ComparecimentoInfo } from "@/lib/types"
 
 
 
 interface IrmandadeFieldProps {
-  formData: FormDataType
+  formData: ComparecimentoInfo
   increment: (fields: "irmas" | "irmaos") => void
   decrement: (fields: "irmas" | "irmaos") => void
   setIrmandadeCount: (field: "irmas" | "irmaos", value: number) => void

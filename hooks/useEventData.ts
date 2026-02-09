@@ -1,34 +1,26 @@
-import { useState } from "react"
-import type { FormDataType } from "@/lib/types"
+import { useCallback } from "react"
+import type { SetGeneralInfo } from "@/lib/types"
 import { useFormFields } from "./useFormFields"
 
 export function useEventData(
-  eventoData: string,
-  setFormData: React.Dispatch<React.SetStateAction<FormDataType>>,
+  setFormData: SetGeneralInfo,
 ) {
-  const [date, setDate] = useState<Date | undefined>(
-    eventoData ? new Date(eventoData) : undefined
-  )
-
   const { setFieldValue } = useFormFields(setFormData)
 
-  const selectEventDate = (selectedDate: Date | undefined) => {
-    setDate(selectedDate)
+  const selectEventDate = useCallback((selectedDate: Date | undefined) => {
     const iso = selectedDate ? selectedDate.toISOString().split("T")[0] : ""
     setFieldValue("eventoData", iso)
-}
+  }, [setFieldValue])
 
-  const setEventTime = (value: string) => {
+  const setEventTime = useCallback((value: string) => {
     setFieldValue("eventoHorario", value)
-  }
+  }, [setFieldValue])
 
-  const setEventType = (value: string) => {
+  const setEventType = useCallback((value: string) => {
     setFieldValue("tipoEvento", value)
-  }
-
+  }, [setFieldValue])
 
   return {
-    date,
     selectEventDate,
     setEventTime,
     setEventType,

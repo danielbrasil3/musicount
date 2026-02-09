@@ -1,8 +1,8 @@
-import type { FormDataType } from "@/lib/types"
+import type { GeneralInfo } from "@/lib/types"
 
 export function canProceedToNextStep(
   step: number,
-  formData: FormDataType,
+  formData: GeneralInfo,
 ) {
   if (step === 0) {
     return formData.localidade.trim() !== ""

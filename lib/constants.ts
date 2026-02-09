@@ -1,20 +1,37 @@
-import type { EventType, FormDataType } from "@/lib/types"
+import type { EventType, FormDataType, MusiciansInfo, ComparecimentoInfo, ComplementosInfo, GeneralInfo } from "@/lib/types"
 
 export const STEP_ORDER = ["geral", "musicians", "comparecimento", "complementos", "preview"] as const
 
-export const INITIAL_FORM_DATA: FormDataType = {
+
+
+export const INITIAL_GENERAL: GeneralInfo = {
   localidade: "",
   eventoData: "",
   eventoHorario: "",
   tipoEvento: "",
   atendimentoPresidencia: "",
   atendimentoRegencia: "",
+}
+
+export const INITIAL_MUSICIANS: MusiciansInfo = {
   instrumentos: {},
   organistas: 0,
+}
+
+export const INITIAL_COMPARECIMENTO: ComparecimentoInfo = {
   ministerio: {},
   irmandade: { irmas: 0, irmaos: 0 },
-  complementos: { hinos: [], coros: [], visitas: [] },
+
 }
+
+export const INITIAL_COMPLEMENTOS: ComplementosInfo = {
+  complementos: {
+    hinos: [],
+    coros: [],
+    visitas: [],
+  },
+}
+
 
 export const eventTypes: EventType = [
   { id: "ensaio-local", label: "Ensaio Local" },

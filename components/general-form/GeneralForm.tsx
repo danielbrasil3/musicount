@@ -7,26 +7,30 @@ import { EventTypeField } from "./fields/EventTypeField"
 import { LocationField } from "./fields/LocationField"
 import { AttendanceField } from "./fields/AttendanceField"
 
-{/* TYPES */}
-import type { FormDataType, SetFormDataType } from "@/lib/types"
-
 {/* HOOKS */}
-import { useMemo } from "react"
+import { usePersistedForm } from "@/hooks/usePersistedForm"
+
+{/* CONSTANTS */}
+import { INITIAL_GENERAL } from "@/lib/constants"
 
 {/* GUARD */}
 import { canProceedToNextStep } from "@/lib/formGuards"
 import { Button } from "../ui/button"
 
 
+
 interface GeneralFormProps {
-  formData: FormDataType
-  setFormData: SetFormDataType
   onNext: () => void
   onReset: () => void
 }
 
-export default function GeneralForm({ formData, setFormData, onNext, onReset}: GeneralFormProps) {
+export default function GeneralForm({onNext, onReset}: GeneralFormProps) {
+  const {formData, setFormData, resetForm} = usePersistedForm("general", INITIAL_GENERAL)
   const [currentStep, setCurrentStep] = useState(0)
+  
+  
+
+  
 
   function handleNext(e: React.FormEvent) {
       e.preventDefault()
@@ -37,10 +41,7 @@ export default function GeneralForm({ formData, setFormData, onNext, onReset}: G
       }
     }
 
-  const canProceed = useMemo(
-    () => canProceedToNextStep(currentStep, formData),
-    [currentStep, formData],
-  )
+  const canProceed = Boolean(canProceedToNextStep(currentStep, formData))
 
 
   
@@ -49,7 +50,7 @@ export default function GeneralForm({ formData, setFormData, onNext, onReset}: G
       {/* Localidade */}
       <LocationField
         currentStep={currentStep}
-        formData={formData}
+        localidade={formData.localidade}
         setFormData={setFormData}
         onReset={onReset}
       />
@@ -58,22 +59,27 @@ export default function GeneralForm({ formData, setFormData, onNext, onReset}: G
       {currentStep >= 1 && (
         <EventTypeField
           eventoData={formData.eventoData}
-          formData={formData}
+          eventoHorario={formData.eventoHorario}
+          tipoEvento={formData.tipoEvento}
           setFormData={setFormData}
         />
       )}
 
       {/* Atendimento */}
       {currentStep >= 2 && (
-        <AttendanceField formData={formData} setFormData={setFormData} />
+        <AttendanceField 
+          atendimentoPresidencia={formData.atendimentoPresidencia}
+          atendimentoRegencia={formData.atendimentoRegencia}
+          setFormData={setFormData} 
+        />
       )}
 
       {currentStep >= 0 && (
         <Button
           type="submit"
-
-          className="w-full h-12 text-base font-medium transition-all duration-300 animate-in fade-in slide-in-from-bottom-4 bg-primary text-primary-foreground rounded-md disabled:bg-primary/90"
+          className="w-full h-12 text-base font-medium transition-all duration-300 bg-primary text-primary-foreground rounded-md disabled:bg-primary/90"
           disabled={!canProceed}
+          suppressHydrationWarning
         >
           {currentStep < 2 ? "Continuar" : "Próximo"}
         </Button>
