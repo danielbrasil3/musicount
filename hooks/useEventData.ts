@@ -8,7 +8,17 @@ export function useEventData(
   const { setFieldValue } = useFormFields(setFormData)
 
   const selectEventDate = useCallback((selectedDate: Date | undefined) => {
-    const iso = selectedDate ? selectedDate.toISOString().split("T")[0] : ""
+    if (!selectedDate) {
+      setFieldValue("eventoData", "")
+      return
+    }
+    
+    // Construir data em formato ISO (YYYY-MM-DD) sem converter para UTC
+    const year = selectedDate.getFullYear()
+    const month = String(selectedDate.getMonth() + 1).padStart(2, "0")
+    const day = String(selectedDate.getDate()).padStart(2, "0")
+    const iso = `${year}-${month}-${day}`
+    
     setFieldValue("eventoData", iso)
   }, [setFieldValue])
 

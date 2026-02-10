@@ -43,7 +43,11 @@ export const EventTypeField = memo(function EventTypeField({
     useEventData(setFormData)
 
   const date = useMemo(
-    () => (eventoData ? new Date(eventoData) : undefined),
+    () => {
+      if (!eventoData) return undefined
+      const [year, month, day] = eventoData.split("-").map(Number)
+      return new Date(year, month - 1, day)
+    },
     [eventoData]
   )
 

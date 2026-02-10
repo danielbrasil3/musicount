@@ -21,6 +21,10 @@ import { STEP_ORDER } from "@/lib/constants"
 export default function Home() {
   const [currentFormStep, setCurrentFormStep] = React.useState<FormStep>("geral")
 
+  {/*Scroll para o topo ao mudar de página*/}
+  React.useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [currentFormStep])
 
   const currentStepIndex = STEP_ORDER.indexOf(currentFormStep)
 

@@ -11,7 +11,7 @@ import { AttendanceField } from "./fields/AttendanceField"
 import { usePersistedForm } from "@/hooks/usePersistedForm"
 
 {/* CONSTANTS */}
-import { INITIAL_GENERAL } from "@/lib/constants"
+import { INITIAL_GENERAL, INITIAL_MUSICIANS, INITIAL_COMPARECIMENTO, INITIAL_COMPLEMENTOS } from "@/lib/constants"
 
 {/* GUARD */}
 import { canProceedToNextStep } from "@/lib/formGuards"
@@ -26,6 +26,9 @@ interface GeneralFormProps {
 
 export default function GeneralForm({onNext, onReset}: GeneralFormProps) {
   const {formData, setFormData, resetForm} = usePersistedForm("general", INITIAL_GENERAL)
+  const { resetForm: resetMusicians } = usePersistedForm("musicians", INITIAL_MUSICIANS)
+  const { resetForm: resetComparecimento } = usePersistedForm("comparecimento", INITIAL_COMPARECIMENTO)
+  const { resetForm: resetComplementos } = usePersistedForm("complementos", INITIAL_COMPLEMENTOS)
   const [currentStep, setCurrentStep] = useState(0)
   const [isHydrated, setIsHydrated] = useState(false)
   
@@ -45,6 +48,10 @@ export default function GeneralForm({onNext, onReset}: GeneralFormProps) {
 
   function handleReset() {
     resetForm()
+    resetMusicians()
+    resetComparecimento()
+    resetComplementos()
+    setCurrentStep(0)
     onReset()
   }
 
