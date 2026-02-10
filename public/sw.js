@@ -1,13 +1,51 @@
-const STATIC_CACHE = "musicount-static-v1"
-const IMAGE_CACHE = "musicount-images-v1"
+const STATIC_CACHE = "musicount-static-v3"
+const IMAGE_CACHE = "musicount-images-v3"
 const OFFLINE_URL = "/offline"
 
-const PRECACHE_URLS = ["/", OFFLINE_URL, "/icon.png"]
+const PRECACHE_URLS = ["/", OFFLINE_URL, "/icon.png", "/ENSAIO.jpg"]
+
+// URLs de imagens para fazer precache
+const IMAGE_PRECACHE_URLS = [
+  "/instruments/acordeon.webp",
+  "/instruments/baritono-vertical.webp",
+  "/instruments/clarinete-alto.webp",
+  "/instruments/clarinete-baixo.webp",
+  "/instruments/clarinete.webp",
+  "/instruments/corne-ingles.webp",
+  "/instruments/cornet.webp",
+  "/instruments/eufonio.webp",
+  "/instruments/fagote.webp",
+  "/instruments/flauta.webp",
+  "/instruments/flugelhorn.webp",
+  "/instruments/oboe-damore.webp",
+  "/instruments/oboe.webp",
+  "/instruments/sax-alto.webp",
+  "/instruments/sax-baritono.webp",
+  "/instruments/sax-soprano-curvo.webp",
+  "/instruments/sax-soprano.webp",
+  "/instruments/sax-tenor.webp",
+  "/instruments/trombone.webp",
+  "/instruments/trombonito.webp",
+  "/instruments/trompa.webp",
+  "/instruments/trompete.webp",
+  "/instruments/tuba.webp",
+  "/instruments/viola.webp",
+  "/instruments/violino.webp",
+  "/instruments/violoncelo.webp",
+]
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     Promise.all([
       caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE_URLS)),
+      // Fazer precache das imagens durante a instalação
+      caches.open(IMAGE_CACHE).then((cache) => {
+        // Se as imagens não estiverem disponíveis na instalação, tenta fazer cache
+        // de forma não-bloqueante (se falhar, não quebra a instalação)
+        cache.addAll(IMAGE_PRECACHE_URLS).catch(() => {
+          console.log("Algumas imagens não puderam ser cacheadas na instalação, serão cacheadas sob demanda")
+        })
+      })
     ])
   )
   self.skipWaiting()
@@ -33,17 +71,30 @@ self.addEventListener("fetch", (event) => {
 
   if (url.origin !== self.location.origin) return
 
-  if (url.pathname.startsWith("/instruments/")) {
+  // Estratégia cache-first para imagens
+  if (url.pathname.startsWith("/instruments/") || url.pathname === "/ENSAIO.jpg") {
     event.respondWith(
       caches.open(IMAGE_CACHE).then(async (cache) => {
+        // Tenta servir do cache primeiro
         const cached = await cache.match(event.request)
         if (cached) return cached
 
-        const response = await fetch(event.request)
-        if (response && response.status === 200) {
-          cache.put(event.request, response.clone())
+        try {
+          // Se não estiver em cache, busca da rede
+          const response = await fetch(event.request)
+          if (response && response.status === 200) {
+            // Cache a imagem para próximas vezes
+            cache.put(event.request, response.clone())
+          }
+          return response
+        } catch {
+          // Se falhar e não tiver cache, retorna resposta vazia bem formatada
+          return new Response(new Blob(), {
+            status: 404,
+            statusText: "Not Found",
+            headers: { "Content-Type": "image/webp" }
+          })
         }
-        return response
       })
     )
     return
@@ -51,15 +102,27 @@ self.addEventListener("fetch", (event) => {
 
   if (event.request.mode === "navigate") {
     event.respondWith(
-      fetch(event.request)
+      fetch(event.request, { timeout: 5000 })
         .then((response) => {
+          if (!response || response.status !== 200) {
+            return caches.match(event.request).then((cached) => {
+              return cached || response
+            })
+          }
+
           const clone = response.clone()
           caches.open(STATIC_CACHE).then((cache) => cache.put(event.request, clone))
           return response
         })
         .catch(async () => {
           const cached = await caches.match(event.request)
-          return cached || (await caches.match(OFFLINE_URL))
+          if (cached) return cached
+
+          if (url.pathname !== "/" && url.pathname !== OFFLINE_URL) {
+            return caches.match(OFFLINE_URL)
+          }
+
+          return caches.match("/")
         })
     )
     return
@@ -67,23 +130,25 @@ self.addEventListener("fetch", (event) => {
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
-      return (
-        cached ||
-        fetch(event.request).then((response) => {
-          if (!response || response.status !== 200) {
-            return response
-          }
+      if (cached) return cached
 
-          const responseClone = response.clone()
-
-          caches.open(STATIC_CACHE).then((cache) => {
-            cache.put(event.request, responseClone)
-          })
-
+      return fetch(event.request).then((response) => {
+        if (!response || response.status !== 200) {
           return response
+        }
+
+        const responseClone = response.clone()
+
+        caches.open(STATIC_CACHE).then((cache) => {
+          cache.put(event.request, responseClone)
         })
-      )
+
+        return response
+      }).catch(() => {
+        return cached || new Response(new Blob(), { status: 404 })
+      })
     })
   )
-
 })
+
+

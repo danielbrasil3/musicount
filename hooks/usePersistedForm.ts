@@ -1,11 +1,16 @@
-import type { FormDataType } from "@/lib/types"
 import { useLocalStorage } from "./useLocalStorage"
+import { useCallback } from "react"
 
-
-const STORAGE_KEY = "ensaio-form"
 
 export function usePersistedForm<T>(key: string, initial: T) {
-  const [formData, setFormData] = useLocalStorage<T>(key, initial)
+  const [formData, setFormDataRaw] = useLocalStorage<T>(key, initial)
+
+  // Wrapper que garante que setFormData sempre persista mudanças
+  const setFormData = useCallback((
+    updater: T | ((prev: T) => T)
+  ) => {
+    setFormDataRaw(updater)
+  }, [setFormDataRaw])
 
   const resetForm = () => {
     if (typeof window !== "undefined") {

@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import "./globals.css"
 import { RegisterServiceWorker } from "@/components/pwa/RegisterServiceWorker"
+import { OfflineIndicator } from "@/components/pwa/OfflineIndicator"
 import { Inter } from "next/font/google"
 
 export const metadata: Metadata = {
@@ -29,8 +30,10 @@ export default function RootLayout({
       </head>
       <body>
         <RegisterServiceWorker />
+        <OfflineIndicator />
         {children}
       </body>
     </html>
   )
 }
+

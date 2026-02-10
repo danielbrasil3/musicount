@@ -10,24 +10,40 @@ let ensaioBackgroundBase64Promise: Promise<string> | null = null
 
 export function usePDFGenerator(formData: FormDataType) {
 
-  async function imageToBase64(url: string): Promise<string> {
-    const res = await fetch(url);
+  async function imageToBase64(url: string, retries = 2): Promise<string> {
+    try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000) // timeout de 5 segundos
+      
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutId)
 
-    if (!res.ok) {
-      throw new Error(`Erro ao carregar imagem: ${res.status}`);
+      if (!res.ok) {
+        throw new Error(`Erro ao carregar imagem: ${res.status}`);
+      }
+
+      const blob = await res.blob();
+
+      if (!blob.type.startsWith("image/")) {
+        throw new Error("Arquivo retornado não é imagem");
+      }
+
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      if (retries > 0 && !navigator.onLine) {
+        // Se offline e tem retries, tenta novamente em 500ms
+        await new Promise(r => setTimeout(r, 500))
+        return imageToBase64(url, retries - 1)
+      }
+      
+      console.warn(`Erro ao carregar imagem ${url}:`, error)
+      // Retorna uma imagem vazia em base64 em caso de erro
+      return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
     }
-
-    const blob = await res.blob();
-
-    if (!blob.type.startsWith("image/")) {
-      throw new Error("Arquivo retornado não é imagem");
-    }
-
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.readAsDataURL(blob);
-    });
   }
 
 
@@ -51,9 +67,11 @@ export function usePDFGenerator(formData: FormDataType) {
         ensaioBackgroundBase64Promise = imageToBase64("/ENSAIO.jpg")
       }
 
-      const bgBase64 = await ensaioBackgroundBase64Promise
+      //const bgBase64 = await ensaioBackgroundBase64Promise
 
-      doc.addImage(bgBase64, "PNG", 0, 0, 210, 297)
+      //doc.addImage(bgBase64, "PNG", 0, 0, 210, 297)
+
+      doc.setFillColor(245, 255, 255, 0.8)
 
       const pageWidth = doc.internal.pageSize.getWidth()
       const pageHeight = doc.internal.pageSize.getHeight()

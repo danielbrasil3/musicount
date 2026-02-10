@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 
 {/* FIELDS */}
 import { EventTypeField } from "./fields/EventTypeField"
@@ -41,7 +41,15 @@ export default function GeneralForm({onNext, onReset}: GeneralFormProps) {
       }
     }
 
-  const canProceed = Boolean(canProceedToNextStep(currentStep, formData))
+  function handleReset() {
+    // limpa os dados persistidos deste formulário e volta ao passo inicial
+    resetForm()
+    onReset()
+  }
+  // Usamos useMemo para garantir que canProceed seja calculado com os dados mais atualizados
+  const canProceed = useMemo(() => {
+    return Boolean(canProceedToNextStep(currentStep, formData))
+  }, [currentStep, formData])
 
 
   
@@ -52,7 +60,7 @@ export default function GeneralForm({onNext, onReset}: GeneralFormProps) {
         currentStep={currentStep}
         localidade={formData.localidade}
         setFormData={setFormData}
-        onReset={onReset}
+        onReset={handleReset}
       />
 
       {/* Tipo de Evento */}

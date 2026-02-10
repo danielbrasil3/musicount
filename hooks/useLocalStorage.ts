@@ -10,25 +10,28 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
     
     try {
       const stored = window.localStorage.getItem(key)
-      return stored ? (JSON.parse(stored) as T) : initialValue
-    } catch {
-      return initialValue
+      if (stored) {
+        return JSON.parse(stored) as T
+      }
+    } catch (err) {
+      console.error(`Erro ao ler localStorage para chave '${key}':`, err)
     }
+    
+    return initialValue
   })
   
-  const prev = useRef(value)
+  const isInitialized = useRef(false)
 
   // Persist changes to localStorage
   useEffect(() => {
     if (typeof window === "undefined") return
-    if (Object.is(prev.current, value)) return
-
-    prev.current = value
 
     try {
+      // Always sync on first render and when value changes
       window.localStorage.setItem(key, JSON.stringify(value))
+      isInitialized.current = true
     } catch (err) {
-      console.error("Erro ao salvar localStorage", err)
+      console.error(`Erro ao salvar localStorage para chave '${key}':`, err)
     }
   }, [key, value])
 

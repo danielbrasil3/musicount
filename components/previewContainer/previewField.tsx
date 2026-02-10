@@ -25,16 +25,17 @@ import ErrorAlert from "@/components/alerts/errorAlert"
 import ValidationErrorsAlert from "@/components/alerts/validationErrorsAlert"
 import { usePersistedForm } from "@/hooks/usePersistedForm"
 import { INITIAL_GENERAL, INITIAL_MUSICIANS, INITIAL_COMPARECIMENTO, INITIAL_COMPLEMENTOS } from "@/lib/constants"
+import { PDFOfflineWarning } from "@/components/pwa/PDFOfflineWarning"
 
 interface PreviewFieldProps {
   onReset: () => void
 }
 
 export default function PreviewField({ onReset }: PreviewFieldProps) {
-  const { formData: generalData } = usePersistedForm("general", INITIAL_GENERAL)
-  const { formData: musiciansData } = usePersistedForm("musicians", INITIAL_MUSICIANS)
-  const { formData: comparecimentoData } = usePersistedForm("comparecimento", INITIAL_COMPARECIMENTO)
-  const { formData: complementosData } = usePersistedForm("complementos", INITIAL_COMPLEMENTOS)
+  const { formData: generalData, resetForm: resetGeneral } = usePersistedForm("general", INITIAL_GENERAL)
+  const { formData: musiciansData, resetForm: resetMusicians } = usePersistedForm("musicians", INITIAL_MUSICIANS)
+  const { formData: comparecimentoData, resetForm: resetComparecimento } = usePersistedForm("comparecimento", INITIAL_COMPARECIMENTO)
+  const { formData: complementosData, resetForm: resetComplementos } = usePersistedForm("complementos", INITIAL_COMPLEMENTOS)
 
   // Combinar todos os dados separados em um único FormDataType
   const formData = {
@@ -47,9 +48,24 @@ export default function PreviewField({ onReset }: PreviewFieldProps) {
   const { pdfUrl, error, validationErrors, generate, close } = usePDFPreview(formData)
   const { getTipoEventoLabel, getInstrumentLabel, getMinisterioLabel } = usePDFGenerator(formData)
 
+  function handleReset() {
+    // limpar todos os formulários persistidos e voltar ao início
+    try {
+      resetGeneral()
+      resetMusicians()
+      resetComparecimento()
+      resetComplementos()
+    } finally {
+      onReset()
+    }
+  }
+
 
   return (
     <div className="space-y-6">
+      
+      {/* Avisos de status offline */}
+      <PDFOfflineWarning />
       
       {/* Error Alert */}
       {error && <ErrorAlert message={error} />}
@@ -63,7 +79,7 @@ export default function PreviewField({ onReset }: PreviewFieldProps) {
         getTipoEventoLabel={getTipoEventoLabel}
         getInstrumentLabel={getInstrumentLabel}
         getMinisterioLabel={getMinisterioLabel}
-        onReset={onReset}
+        onReset={handleReset}
       />
 
       {/* PDF Viewer */}

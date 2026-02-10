@@ -60,6 +60,7 @@ export function CoroField({ onAdd, onRemove, items }: CoroFieldProps) {
         <Input
           id="coros"
           placeholder="Ex: 1"
+          type="number"
           value={coroInput}
           onChange={handleInputChange}
           onKeyDown={handleKeyPress}

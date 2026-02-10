@@ -16,6 +16,7 @@ import { Music } from "lucide-react"
 {/*LIBS*/ }
 import type { FormStep } from "@/lib/types"
 import { STEP_ORDER } from "@/lib/constants"
+import { usePersistedForm } from "@/hooks/usePersistedForm"
 
 
 {/*HOOKS*/}
@@ -23,7 +24,7 @@ import { STEP_ORDER } from "@/lib/constants"
 
 export default function Home() {
   const [currentFormStep, setCurrentFormStep] = React.useState<FormStep>("geral")
-  const [generalStep, setGeneralStep] = React.useState(0)
+
 
   const currentStepIndex = STEP_ORDER.indexOf(currentFormStep)
 
@@ -37,17 +38,16 @@ export default function Home() {
 
   {/*Passo anterior*/}
   const goToPreviousStep = React.useCallback(() => {
-    if (currentFormStep === "geral" && generalStep > 0) {
-      setGeneralStep((s) => s - 1)
+    if (currentFormStep === "geral") {
+      return
     } else if (currentStepIndex > 0) {
       setCurrentFormStep(STEP_ORDER[currentStepIndex - 1])
     }
-  }, [generalStep, currentFormStep, currentStepIndex])
+  }, [currentFormStep, currentStepIndex])
 
   {/*Voltar ao inicio*/}
   const goToInitialStep = React.useCallback(() => {
     setCurrentFormStep("geral")
-    setGeneralStep(0)
   }, [])
 
 
