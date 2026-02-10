@@ -1,19 +1,9 @@
 "use client"
 
-{/* UI COMPONENTS */}
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Alert } from "@/components/ui/alert"
-
-{/* ICONS */}
-import { FileText, Download, X, AlertCircle } from "lucide-react"
-
-{/* TYPES */}
-import type { FormDataType } from "@/lib/types"
-
 {/* HOOKS */}
 import { usePDFGenerator } from "@/hooks/usePDFGenerator"
 import { usePDFPreview } from "@/hooks/usePDFPreview"
+import { usePersistedForm } from "@/hooks/usePersistedForm"
 
 {/* FIELDS */}
 import { PreviewCard } from "./fields/previewCard"
@@ -23,9 +13,10 @@ import { GeneratePDFButton } from "./fields/generatePDFButton"
 {/* ALERTS */}
 import ErrorAlert from "@/components/alerts/errorAlert"
 import ValidationErrorsAlert from "@/components/alerts/validationErrorsAlert"
-import { usePersistedForm } from "@/hooks/usePersistedForm"
-import { INITIAL_GENERAL, INITIAL_MUSICIANS, INITIAL_COMPARECIMENTO, INITIAL_COMPLEMENTOS } from "@/lib/constants"
 import { PDFOfflineWarning } from "@/components/pwa/PDFOfflineWarning"
+
+{/* CONSTANTS */}
+import { INITIAL_GENERAL, INITIAL_MUSICIANS, INITIAL_COMPARECIMENTO, INITIAL_COMPLEMENTOS } from "@/lib/constants"
 
 interface PreviewFieldProps {
   onReset: () => void
@@ -37,7 +28,6 @@ export default function PreviewField({ onReset }: PreviewFieldProps) {
   const { formData: comparecimentoData, resetForm: resetComparecimento } = usePersistedForm("comparecimento", INITIAL_COMPARECIMENTO)
   const { formData: complementosData, resetForm: resetComplementos } = usePersistedForm("complementos", INITIAL_COMPLEMENTOS)
 
-  // Combinar todos os dados separados em um único FormDataType
   const formData = {
     ...generalData,
     ...musiciansData,
@@ -85,7 +75,13 @@ export default function PreviewField({ onReset }: PreviewFieldProps) {
       {/* PDF Viewer */}
 
       {pdfUrl ? (
-        <PDFViewer pdfUrl={pdfUrl} onClose={close} />
+        <PDFViewer 
+          pdfUrl={pdfUrl} 
+          onClose={close}
+          eventDate={generalData.eventoData}
+          eventLocation={generalData.localidade}
+          eventType={generalData.tipoEvento}
+        />
       ) : (
         <GeneratePDFButton onClick={generate} />
       )}

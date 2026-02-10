@@ -28,7 +28,7 @@ export function PreviewCard({ formData, getTipoEventoLabel, getInstrumentLabel, 
 
 	return (
 		<Card className="bg-zinc-900/50 border-zinc-800 backdrop-blur-sm">
-			<CardHeader className="flex flex-row items-center justify-between">
+			<CardHeader className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-0 justify-between">
 				<div className="flex items-center gap-3">
 					<div className="p-2 rounded-lg bg-blue-500/10">
 						<FileText className="w-5 h-5 text-blue-400" />

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 
 {/* FIELDS */}
 import { EventTypeField } from "./fields/EventTypeField"
@@ -27,10 +27,12 @@ interface GeneralFormProps {
 export default function GeneralForm({onNext, onReset}: GeneralFormProps) {
   const {formData, setFormData, resetForm} = usePersistedForm("general", INITIAL_GENERAL)
   const [currentStep, setCurrentStep] = useState(0)
+  const [isHydrated, setIsHydrated] = useState(false)
   
-  
-
-  
+  // Força validação após hidratação
+  useEffect(() => {
+    setIsHydrated(true)
+  }, [])
 
   function handleNext(e: React.FormEvent) {
       e.preventDefault()
@@ -42,14 +44,16 @@ export default function GeneralForm({onNext, onReset}: GeneralFormProps) {
     }
 
   function handleReset() {
-    // limpa os dados persistidos deste formulário e volta ao passo inicial
     resetForm()
     onReset()
   }
-  // Usamos useMemo para garantir que canProceed seja calculado com os dados mais atualizados
+
+
   const canProceed = useMemo(() => {
+    // Só valida após hidratação para evitar problemas com SSR
+    if (!isHydrated) return false
     return Boolean(canProceedToNextStep(currentStep, formData))
-  }, [currentStep, formData])
+  }, [currentStep, formData, isHydrated])
 
 
   
