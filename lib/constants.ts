@@ -10,7 +10,7 @@ export const INITIAL_GENERAL: GeneralInfo = {
   eventoHorario: "",
   tipoEvento: "",
   atendimentoPresidencia: "",
-  atendimentoRegencia: "",
+  atendimentoRegencia: [],
 }
 
 export const INITIAL_MUSICIANS: MusiciansInfo = {

@@ -43,7 +43,7 @@ export type GeneralInfo = {
   eventoHorario: string
   tipoEvento: string
   atendimentoPresidencia: string
-  atendimentoRegencia: string
+  atendimentoRegencia: string[]
 }
 
 import type { STEP_ORDER } from "./constants"

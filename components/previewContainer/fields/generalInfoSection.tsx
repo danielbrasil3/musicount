@@ -36,7 +36,7 @@ export function GeneralInfoSection({ formData, getTipoEventoLabel }: GeneralInfo
         </div>
         <div className="flex justify-between py-2 border-b border-zinc-800">
           <span className="text-zinc-400">Atendimento Regência:</span>
-          <span className="text-zinc-100 font-medium">{formData.atendimentoRegencia || "—"}</span>
+          <span className="text-zinc-100 font-medium">{(Array.isArray(formData.atendimentoRegencia) && formData.atendimentoRegencia.length > 0) ? formData.atendimentoRegencia.join(", ") : "—"}</span>
         </div>
       </div>
     </div>

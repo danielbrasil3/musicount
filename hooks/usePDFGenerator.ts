@@ -155,7 +155,13 @@ export function usePDFGenerator(formData: FormDataType) {
     )
     yPosition = addDataRow("Horário", formData.eventoHorario, yPosition, pageWidth - 12, margin - 4)
     yPosition = addDataRow("Atendimento Presidência", sanitizeForPDF(formData.atendimentoPresidencia || "Não informado"), yPosition, pageWidth - 12, margin - 4)
-    yPosition = addDataRow("Atendimento Regência", sanitizeForPDF(formData.atendimentoRegencia || "Não informado"), yPosition, pageWidth - 12, margin - 4)
+    yPosition = addDataRow(
+      "Atendimento Regência",
+      sanitizeForPDF(Array.isArray(formData.atendimentoRegencia) ? formData.atendimentoRegencia.join(", ") : (formData.atendimentoRegencia || "Não informado")),
+      yPosition,
+      pageWidth - 12,
+      margin - 4,
+    )
     yPosition += 6
 
     // Layout 2 colunas começa aqui

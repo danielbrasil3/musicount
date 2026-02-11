@@ -35,7 +35,7 @@ export const formDataSchema = z.object({
   eventoHorario: z.string().min(1, "Horário do evento é obrigatório"),
   tipoEvento: z.string().min(1, "Tipo de evento é obrigatório"),
   atendimentoPresidencia: z.string().max(100, "Presidência não pode exceder 100 caracteres").optional().default(""),
-  atendimentoRegencia: z.string().max(100, "Regência não pode exceder 100 caracteres").optional().default(""),
+  atendimentoRegencia: z.array(z.string().max(100, "Regência não pode exceder 100 caracteres")).optional().default([]),
   instrumentos: instrumentosSchema,
   organistas: z.number().int().min(0).max(999).default(0),
   ministerio: ministerioSchema,

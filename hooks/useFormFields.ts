@@ -8,7 +8,7 @@ export function useFormFields(
   setFormData: React.Dispatch<React.SetStateAction<GeneralInfo>>,
 ) {
   const setFieldValue = useCallback(
-    (key: keyof GeneralInfo, value: string) => {
+    <K extends keyof GeneralInfo>(key: K, value: GeneralInfo[K]) => {
       setFormData((prev) => ({
         ...prev,
         [key]: value,

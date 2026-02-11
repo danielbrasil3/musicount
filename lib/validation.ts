@@ -105,7 +105,11 @@ export function validateFormData(formData: any): { valid: boolean; errors: strin
   if (formData.atendimentoPresidencia?.length > MAX_NAME_LENGTH) {
     errors.push(`Presidência não pode exceder ${MAX_NAME_LENGTH} caracteres`)
   }
-  if (formData.atendimentoRegencia?.length > MAX_NAME_LENGTH) {
+  if (Array.isArray(formData.atendimentoRegencia)) {
+    if (formData.atendimentoRegencia.some((s: string) => (s || "").length > MAX_NAME_LENGTH)) {
+      errors.push(`Regência não pode conter nomes com mais de ${MAX_NAME_LENGTH} caracteres`)
+    }
+  } else if (typeof formData.atendimentoRegencia === "string" && formData.atendimentoRegencia.length > MAX_NAME_LENGTH) {
     errors.push(`Regência não pode exceder ${MAX_NAME_LENGTH} caracteres`)
   }
 
