@@ -2,7 +2,11 @@
 
 import { useEffect, useRef, useState } from "react"
 
+const STORAGE_VERSION = "v2"
+
 export function useLocalStorage<T>(key: string, initialValue: T) {
+  const versionedKey = `${key}_${STORAGE_VERSION}`
+
   const [value, setValue] = useState<T>(initialValue)
   const [isMounted, setIsMounted] = useState(false)
 
@@ -14,17 +18,17 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
     if (!isMounted) return
     
     try {
-      const stored = localStorage.getItem(key)
+      const stored = localStorage.getItem(versionedKey)
       if (stored) {
         const parsed = JSON.parse(stored)
         setValue(parsed)
       }
     } catch (err) {
-      console.error(`Erro ao ler localStorage para chave '${key}':`, err)
-      localStorage.removeItem(key)
+      console.error(`Erro ao ler localStorage para chave '${versionedKey}':`, err)
+      localStorage.removeItem(versionedKey)
     }
     
-  }, [key, isMounted])
+  }, [versionedKey, isMounted])
 
   
   const isInitialized = useRef(false)
@@ -33,12 +37,12 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
     if (!isMounted) return
 
     try {
-      localStorage.setItem(key, JSON.stringify(value))
+      localStorage.setItem(versionedKey, JSON.stringify(value))
       isInitialized.current = true
     } catch (err) {
-      console.error(`Erro ao salvar localStorage para chave '${key}':`, err)
+      console.error(`Erro ao salvar localStorage para chave '${versionedKey}':`, err)
     }
-  }, [key, value, isMounted])
+  }, [versionedKey, value, isMounted])
 
   return [value, setValue] as const
 }
