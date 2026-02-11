@@ -3,37 +3,42 @@
 import { useEffect, useRef, useState } from "react"
 
 export function useLocalStorage<T>(key: string, initialValue: T) {
-  // Initialize with localStorage value only if available, otherwise use initial
-  const [value, setValue] = useState<T>(() => {
-    // This runs during render to set initial state quickly
-    if (typeof window === "undefined") return initialValue
+  const [value, setValue] = useState<T>(initialValue)
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!isMounted) return
     
     try {
-      const stored = window.localStorage.getItem(key)
+      const stored = localStorage.getItem(key)
       if (stored) {
-        return JSON.parse(stored) as T
+        const parsed = JSON.parse(stored)
+        setValue(parsed)
       }
     } catch (err) {
       console.error(`Erro ao ler localStorage para chave '${key}':`, err)
+      localStorage.removeItem(key)
     }
     
-    return initialValue
-  })
+  }, [key, isMounted])
+
   
   const isInitialized = useRef(false)
 
-  // Persist changes to localStorage
   useEffect(() => {
-    if (typeof window === "undefined") return
+    if (!isMounted) return
 
     try {
-      // Always sync on first render and when value changes
-      window.localStorage.setItem(key, JSON.stringify(value))
+      localStorage.setItem(key, JSON.stringify(value))
       isInitialized.current = true
     } catch (err) {
       console.error(`Erro ao salvar localStorage para chave '${key}':`, err)
     }
-  }, [key, value])
+  }, [key, value, isMounted])
 
   return [value, setValue] as const
 }
